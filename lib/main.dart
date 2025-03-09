@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         title: 'App Test',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green, secondary: const Color.fromARGB(255, 170, 146, 8)),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green, secondary: const Color(0xFF26EC0C)),
         ),
         home: MyHomePage(),
       ),
@@ -32,6 +32,17 @@ class MyAppState extends ChangeNotifier {
     current = WordPair.random();
     notifyListeners();
   }
+  
+  var favorites = <WordPair>[];
+
+  void toggleFavorite() {
+    if (favorites.contains(current)) {
+      favorites.remove(current);
+    } else {
+      favorites.add(current);
+    }
+    notifyListeners();
+  }
 }
 
 class MyHomePage extends StatelessWidget {
@@ -41,18 +52,25 @@ class MyHomePage extends StatelessWidget {
     var pair = appState.current;
 
     return Scaffold(
-      body: Column(
-        children: [
-          Text('An AMAZING idea built following the tutorial from Google code labs:'),
-          BigCard(pair: pair),
-
-          ElevatedButton(
-            onPressed: () {
-              appState.getNext();
-            },
-            child: Text('Change!'),
-          )
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            BigCard(pair: pair),
+            SizedBox(height: 10),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    appState.getNext();
+                  },
+                  child: Text('Change!'),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -77,9 +95,10 @@ class BigCard extends StatelessWidget {
     return Card(
       color: theme.colorScheme.secondary,
       child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Text(pair.asSnakeCase, style: style,),
-      ),
+          padding: const EdgeInsets.all(32.0),
+          child: Text(pair.asSnakeCase, style: style, semanticsLabel: "${pair.first} ${pair.second}",
+        )
+      )
     );
   }
 }
