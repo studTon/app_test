@@ -17,7 +17,10 @@ class MyApp extends StatelessWidget {
         title: 'App Test',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.green, secondary: const Color(0xFF26EC0C)),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.green, 
+            secondary: const Color(0xFF26EC0C), 
+            tertiary: const Color.fromARGB(255, 227, 240, 56)),
         ),
         home: MyHomePage(),
       ),
@@ -59,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
     switch (selectedIndex) {
       case 0: page = GeneratorPage();
-      case 1: page = Placeholder();
+      case 1: page = FavoritesPage();
       default: throw UnimplementedError('no widget for this selection');
     }
     return LayoutBuilder(
@@ -91,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Expanded(
                 child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  color: Theme.of(context).colorScheme.tertiary,
                   child: page,
                 ),
               ),
@@ -100,6 +103,40 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       }
     );
+  }
+}
+
+class FavoritesPage extends StatelessWidget {
+  const FavoritesPage({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    
+    var appState = context.watch<MyAppState>();
+    if (appState.favorites.isEmpty) {
+      return Center(
+        child: Text('No favorites yet.'),
+      );
+    }
+    return Center(
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Text('You have '
+                '${appState.favorites.length} favorites:'),
+          ),
+          for (var pair in appState.favorites)
+            ListTile(
+              leading: Icon(Icons.verified_user_rounded),
+              title: Text(pair.asSnakeCase),
+            )
+        ],
+    )
+  );  
   }
 }
 
