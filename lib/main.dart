@@ -135,6 +135,7 @@ class FavoritesPage extends StatelessWidget {
               title: Text(pair.asSnakeCase),
             )
         ],
+        
     )
   );  
   }
