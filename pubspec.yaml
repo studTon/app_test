@@ -1,7 +1,7 @@
 name: app_test
-description: "A Android app made with Flutter just to test."
+description: "Android app that generates words and saves as favorites."
 publish_to: 'none'
-version: 0.0.1
+version: 0.1.0
 
 environment:
   sdk: ^3.6.0
