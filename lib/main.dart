@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_breaks, duplicate_ignore
+
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +8,7 @@ void main() {
   runApp(MyApp());
 }
 
+// ignore: must_be_immutable
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -18,9 +21,9 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.green, 
-            secondary: const Color(0xFF26EC0C), 
-            tertiary: const Color.fromARGB(255, 227, 240, 56)),
+              seedColor: Colors.green,
+              secondary: const Color(0xFF26EC0C),
+              tertiary: const Color.fromARGB(255, 227, 240, 56)),
         ),
         home: MyHomePage(),
       ),
@@ -35,7 +38,7 @@ class MyAppState extends ChangeNotifier {
     current = WordPair.random();
     notifyListeners();
   }
-  
+
   var favorites = <WordPair>[];
 
   void toggleFavorite() {
@@ -54,54 +57,95 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   var selectedIndex = 0;
-
+  
   @override
   Widget build(BuildContext context) {
+    var colorScheme = Theme.of(context).colorScheme;
+
     Widget page;
     switch (selectedIndex) {
-      case 0: page = GeneratorPage();
-      case 1: page = FavoritesPage();
-      default: throw UnimplementedError('no widget for this selection');
+      case 0:
+        page = GeneratorPage();
+        // ignore: unnecessary_breaks
+        break;
+      case 1:
+        page = FavoritesPage();
+        break;
+      default:
+        throw UnimplementedError('no widget for this selection');
     }
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Scaffold(
-          body: Row(
-            children: [
-              SafeArea(
-                child: NavigationRail(
-                  extended: constraints.maxWidth >= 72,
-                  destinations: [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.home),
-                      label: Text('Home'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.favorite),
-                      label: Text('Collection'),
-                    ),
-                  ],
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (value) {
-                    setState(() {
-                      selectedIndex = value;
-                    });
-                                    
-                  },
-                ),
+
+    var mainArea = Container(
+      color: colorScheme.tertiary, // Set the background color here
+      child: Center(
+          child: AnimatedSwitcher(
+            duration: Duration(milliseconds: 200),
+            child: page,
+        ),
+      )
+    );
+
+    return Scaffold(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 450) {
+            // Use a more mobile-friendly layout with BottomNavigationBar
+            return Scaffold(
+              body: mainArea,
+              bottomNavigationBar: BottomNavigationBar(
+                items: [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.favorite),
+                    label: 'Favorites',
+                  ),
+                ],
+                currentIndex: selectedIndex,
+                onTap: (value) {
+                  setState(() {
+                    selectedIndex = value;
+                  });
+                },
+                selectedItemColor: colorScheme.primary,
+                unselectedItemColor: colorScheme.onSurface.withValues(),
+                backgroundColor: colorScheme.surface,
+                type: BottomNavigationBarType.fixed,
               ),
-              Expanded(
-                child: Container(
-                  color: Theme.of(context).colorScheme.tertiary,
-                  child: page,
+            );
+          } else {
+            return Row(
+              children: [
+                SafeArea(
+                  child: NavigationRail(
+                    extended: constraints.maxWidth >= 600,
+                    destinations: [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.home),
+                        label: Text('Home'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.favorite),
+                        label: Text('Favorites'),
+                      ),
+                    ],
+                    selectedIndex: selectedIndex,
+                    onDestinationSelected: (value) {
+                      setState(() {
+                        selectedIndex = value;
+                      });
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      }
+                Expanded(child: mainArea),
+              ],
+            );
+          }
+        },
+      ),
     );
   }
 }
@@ -113,37 +157,33 @@ class FavoritesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     var appState = context.watch<MyAppState>();
+
     if (appState.favorites.isEmpty) {
       return Center(
         child: Text('No favorites yet.'),
       );
     }
-    return Center(
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Text('You have '
-                '${appState.favorites.length} favorites:'),
-          ),
-          for (var pair in appState.favorites)
-            ListTile(
-              leading: Icon(Icons.verified_user_rounded),
-              title: Text(pair.asSnakeCase),
-            )
-        ],
-        
-    )
-  );  
+
+    return ListView(
+      key: ValueKey('favorites'),
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text('You have ${appState.favorites.length} words selected:'),
+        ),
+        for (var pair in appState.favorites)
+          ListTile(title: Text(pair.asSnakeCase),
+          trailing: Icon(Icons.favorite, color: Colors.green),
+          )
+      ],
+    );
   }
 }
 
-
 class GeneratorPage extends StatelessWidget {
   @override
+  // ignore: dead_code
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
@@ -155,6 +195,7 @@ class GeneratorPage extends StatelessWidget {
       icon = Icons.favorite_border;
     }
 
+    // ignore: dead_code
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -176,7 +217,7 @@ class GeneratorPage extends StatelessWidget {
                 onPressed: () {
                   appState.getNext();
                 },
-                child: Text('Change!'),
+                child: Text('Next'),
               ),
             ],
           ),
@@ -185,8 +226,6 @@ class GeneratorPage extends StatelessWidget {
     );
   }
 }
-
-// ...
 
 class BigCard extends StatelessWidget {
   const BigCard({
@@ -199,18 +238,18 @@ class BigCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     final style = theme.textTheme.displayMedium!.copyWith(
-      color: theme.colorScheme.onSecondary
+      color: theme.colorScheme.onSecondary,
     );
 
     return Card(
       color: theme.colorScheme.secondary,
       child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Text(pair.asSnakeCase, style: style, semanticsLabel: "${pair.first} ${pair.second}",
-        )
-      )
+        padding: const EdgeInsets.all(32.0),
+        child: Text(pair.asSnakeCase,
+            style: style,
+            semanticsLabel: "${pair.first} ${pair.second}"),
+      ),
     );
   }
 }
