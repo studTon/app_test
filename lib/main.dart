@@ -21,9 +21,9 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.green,
-              secondary: const Color(0xFF26EC0C),
-              tertiary: const Color.fromARGB(255, 227, 240, 56)),
+              seedColor: Colors.grey,
+              secondary: const Color.fromARGB(255, 128, 128, 128),
+              tertiary: const Color.fromARGB(255, 224, 224, 224)),
         ),
         home: MyHomePage(),
       ),
@@ -179,7 +179,7 @@ class FavoritesPage extends StatelessWidget {
         ),
         for (var pair in appState.favorites)
           ListTile(title: Text(pair.asSnakeCase),
-          leading: Icon(Icons.favorite, color: Colors.green),
+          leading: Icon(Icons.favorite, color: Colors.white),
           trailing: IconButton(icon: Icon(Icons.delete_outline, semanticLabel: 'Delete'),
           onPressed: () => appState.removeFavorite(pair),),
           )
